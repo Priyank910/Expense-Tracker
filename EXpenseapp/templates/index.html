@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Index - iLanding Bootstrap Template</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  <!-- Favicons -->
+  <link href="static/assets/img/favicon.png" rel="icon">
+  <link href="static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Nunito:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="static/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="static/assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="static/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="static/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="static/assets/css/main.css" rel="stylesheet">
+  <link href="static/assets/css/styles.css" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: iLanding
+  * Template URL: https://bootstrapmade.com/ilanding-bootstrap-landing-page-template/
+  * Updated: Nov 12 2024 with Bootstrap v5.3.3
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+</head>
+
+ <body class="index-page">
+
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
+        <!-- Uncomment the line below if you also wish to use an image logo -->
+        <!-- <img src="static/assets/img/logo.png" alt=""> -->
+        <h1 class="sitename">Expense Tracker</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="#hero" class="active">Home</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="/admin" target="_blank">Admin</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container main mt-5" id="hero" data-aos="fade-up">
+
+    <!-- Expnse Section -->
+    <div class="expense-form px-5">
+      <div class="container d-flex justify-content-center">
+        <h2>Add New Expense</h2>
+      </div>
+      <form id="expenseForm" method="post" action="/add_expense">
+        {% csrf_token %}
+        <div class="row m-3">
+          <label class="form-label"><b><h5>Transaction Type</h5></b></label>
+          <div class="form-check col-md-6">
+            <input class="form-check-input" type="radio" name="type" id="incomeType" value="Income" required>
+            <label class="form-check-label" for="incomeType">Income</label>
+          </div>
+          <div class="form-check col-md-6">
+            <input class="form-check-input" type="radio" name="type" id="expenseType" value="Expense" required>
+            <label class="form-check-label" for="expenseType">Expense</label>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="expenseAmount" class="form-label">Amount</label>
+            <input type="number" name="amount" class="form-control" id="expenseAmount" placeholder="Enter amount" required>
+          </div>
+          <div class="col-md-6">
+            <label for="expenseCategory" class="form-label">Category</label>
+            <select class="form-select" name="category" id="expenseCategory" required>
+              <option value="">Select category</option>
+              <option value="Food">Food</option>
+              <option value="Transport">Transport</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Bills">Bills</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="row container d-flex justify-content-center px-2">
+          <button type="submit" class="btn btn-primary" style="width: 60%;">Add Expense</button>
+        </div>
+      </form>
+    </div>
+
+    <table class="expense-table table mt-5">
+      <thead>
+        <tr>
+          <th>Transaction Type</th>
+          <th>Amount</th>
+          <th>Category</th>
+          <th>Date - Time</th>
+          <th>Actions</th> <!-- New column for actions -->
+        </tr>
+      </thead>
+      <tbody id="expenseTableBody">
+        {% for expense in expenses %}
+          <tr>
+            <td>{{ expense.transaction }}</td>
+            <td>{{ expense.amount }}</td>
+            <td>{{ expense.category }}</td>
+            <td>{{ expense.created_at|date:"d M Y, H:i" }}</td>
+            <td>
+              <!-- Delete Button -->
+              <form action="{% url 'delete_expense' expense.id %}" method="post">
+                {% csrf_token %}
+                <button class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="5">No expenses available.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+
+    <!-- Show All Transactions Button -->
+    <div class="mt-3">
+      {% if not show_all %}
+        <a href="/all-expenses" class="btn btn-primary">Show All Transactions</a>
+      {% endif %}
+    </div>
+
+    <!-- End Expnse Section -->
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact section light-background">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Contact</h2>
+        <p>Give your feedback. How's your experience by using this website.</p>
+      </div><!-- End Section Title -->
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+        <div class="row g-4 g-lg-5">
+          <div class="col-lg-5">
+            <div class="info-box" data-aos="fade-up" data-aos-delay="200">
+              <h3>Contact Info</h3>
+              <p>Contect us here where you are comfortable with.</p>
+
+              <div class="info-item" data-aos="fade-up" data-aos-delay="300">
+                <div class="icon-box">
+                  <i class="bi bi-geo-alt"></i>
+                </div>
+                <div class="content">
+                  <h4>Our Location</h4>
+                  <p>A108 Adam Street</p>
+                  <p>New York, NY 535022</p>
+                </div>
+              </div>
+
+              <div class="info-item" data-aos="fade-up" data-aos-delay="400">
+                <div class="icon-box">
+                  <i class="bi bi-telephone"></i>
+                </div>
+                <div class="content">
+                  <h4>Phone Number</h4>
+                  <p>+91 95120 34134</p>
+                </div>
+              </div>
+
+              <div class="info-item" data-aos="fade-up" data-aos-delay="500">
+                <div class="icon-box">
+                  <i class="bi bi-envelope"></i>
+                </div>
+                <div class="content">
+                  <h4>Email Address</h4>
+                  <p>priyankchavda910@gmail.com</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-7">
+            <div class="contact-form" data-aos="fade-up" data-aos-delay="300">
+              <h3>Get In Touch</h3>
+              <p>You can send your opinion here.</p>
+
+              <form action="https://api.web3forms.com/submit" method="POST" class="php-email-form" data-aos="fade-up" data-aos-delay="200">
+                <!-- Replace with your Access Key -->
+                <input type="hidden" name="access_key" value="d4f9490d-0b15-4b03-ac16-e4bd3c1bcb37">
+
+                <div class="row gy-4">
+
+                  <div class="col-md-6">
+                    <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
+                  </div>
+
+                  <div class="col-md-6 ">
+                    <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
+                  </div>
+
+                  <div class="col-12">
+                    <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
+                  </div>
+
+                  <div class="col-12">
+                    <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
+                  </div>
+
+                  <div class="col-12 text-center">
+                    <button type="submit" class="btn">Send Message</button>
+                  </div>
+
+                </div>
+              </form>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section><!-- /Contact Section -->
+
+  </main>
+
+  <footer id="footer" class="footer">
+
+    <div class="container footer-top">
+      <div class="row gy-4">
+        <div class="col-lg-4 col-md-6 footer-about">
+          <a href="index.html" class="logo d-flex align-items-center">
+            <span class="sitename">Expense Tracker</span>
+          </a>
+          <div class="footer-contact pt-3">
+            <p>A108 Adam Street</p>
+            <p>New York, NY 535022</p>
+            <p class="mt-3"><strong>Phone:</strong> <span>+91 95120 34134</span></p>
+            <p><strong>Email:</strong> <span>priyankchavda910@gmail.com</span></p>
+          </div>
+          <div class="social-links d-flex mt-4">
+            <a href=""><i class="bi bi-twitter-x"></i></a>
+            <a href=""><i class="bi bi-facebook"></i></a>
+            <a href=""><i class="bi bi-instagram"></i></a>
+            <a href=""><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Useful Links</h4>
+          <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About us</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Terms of service</a></li>
+            <li><a href="#">Privacy policy</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Our Services</h4>
+          <ul>
+            <li><a href="#">Web Design</a></li>
+            <li><a href="#">Web Development</a></li>
+            <li><a href="#">Product Management</a></li>
+            <li><a href="#">Marketing</a></li>
+            <li><a href="#">Graphic Design</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Hic solutasetp</h4>
+          <ul>
+            <li><a href="#">Molestiae accusamus iure</a></li>
+            <li><a href="#">Excepturi dignissimos</a></li>
+            <li><a href="#">Suscipit distinctio</a></li>
+            <li><a href="#">Dilecta</a></li>
+            <li><a href="#">Sit quas consectetur</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-2 col-md-3 footer-links">
+          <h4>Nobis illum</h4>
+          <ul>
+            <li><a href="#">Ipsam</a></li>
+            <li><a href="#">Laudantium dolorum</a></li>
+            <li><a href="#">Dinera</a></li>
+            <li><a href="#">Trodelas</a></li>
+            <li><a href="#">Flexo</a></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="container copyright text-center mt-4">
+      <p>© <span>Copyright</span> <strong class="px-1 sitename">Expense Tracker</strong> <span>All Rights Reserved</span></p>
+      <div class="credits">
+        <!-- All the links in the footer should remain intact. -->
+        <!-- You can delete the links only if you've purchased the pro version. -->
+        <!-- Licensing information: https://bootstrapmade.com/license/ -->
+        <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
+        Designed by <a href="https://bootstrapmade.com/">Priyank</a>
+      </div>
+    </div>
+
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="static/assets/vendor/php-email-form/validate.js"></script>
+  <script src="static/assets/vendor/aos/aos.js"></script>
+  <script src="static/assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="static/assets/vendor/swiper/swiper-bundle.min.js"></script>
+  <script src="static/assets/vendor/purecounter/purecounter_vanilla.js"></script>
+
+  <!-- Main JS File -->
+  <script src="static/assets/js/main.js"></script>
+
+</body>
+
+</html>
